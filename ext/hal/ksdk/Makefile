@@ -26,6 +26,7 @@ ZEPHYRINCLUDE += -I$(srctree)/ext/hal/ksdk/components/phyksz8081
 endif
 ZEPHYRINCLUDE += -I$(srctree)/ext/hal/ksdk/devices/$(KSDK_DEVICE)
 ZEPHYRINCLUDE += -I$(srctree)/ext/hal/ksdk/drivers
+ZEPHYRINCLUDE += -I$(srctree)/ext/hal/ksdk/components/phyksz8081
 
 # The ksdk uses the CPU name to expose SOC-specific features of a given
 # peripheral. For example, the UART peripheral may be instantiated with/without
@@ -36,6 +37,9 @@ KBUILD_CFLAGS += -D$(KSDK_CPU)
 # Build ksdk device-specific objects. Although it is not normal Kbuild
 # practice, drilling down like this avoids the need for repetitive Makefiles
 # for every ksdk device.
+obj-$(CONFIG_ETH_KSDK) += components/phyksz8081/fsl_phy.o
+obj-$(CONFIG_ETH_KSDK) += drivers/fsl_enet.o
+obj-$(CONFIG_KSDK_RNGA) += drivers/fsl_rnga.o
 obj-y += devices/$(KSDK_DEVICE)/fsl_clock.o
 
 # Build ksdk drivers that can be used for multiple SoC's.
