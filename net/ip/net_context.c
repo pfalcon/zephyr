@@ -389,13 +389,16 @@ PROCESS_THREAD(tcp, ev, data, buf, user_data)
 		}
 
 	read_data:
-		/* We are receiving data from peer. */
-		if (buf && uip_newdata(buf)) {
+		/* We are receiving data or state update from peer. */
+		/* Note that it's important to let application to not
+		   just process new data, but also notice connection
+		   state changes, like peer closed or aborted. So,
+		   we pass any buffer to application, even if it's
+		   zero-length and only contains state flags. An
+		   application should be prepared to deal with zero-
+		   length packets. */
+		if (buf) {
 			struct net_buf *clone;
-
-			if (!uip_len(buf)) {
-				continue;
-			}
 
 			/* Note that uIP stack will reuse the buffer when
 			 * sending ACK to peer host. The sending will happen
