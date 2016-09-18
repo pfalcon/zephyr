@@ -189,7 +189,7 @@ static uint8_t iss[4];          /* The iss variable is used for the TCP
 				initial sequence number. */
 
 #if UIP_ACTIVE_OPEN || UIP_UDP
-static uint16_t lastport;       /* Keeps track of the last port used for
+uint16_t uip_lastport;       /* Keeps track of the last port used for
 				a new connection. */
 #endif /* UIP_ACTIVE_OPEN || UIP_UDP */
 
@@ -396,7 +396,7 @@ uip_init(void)
     uip_conns[c].tcpstateflags = UIP_CLOSED;
   }
 #if UIP_ACTIVE_OPEN || UIP_UDP
-  lastport = 1024;
+  uip_lastport = 32768;
 #endif /* UIP_ACTIVE_OPEN || UIP_UDP */
 
 #if UIP_UDP
@@ -421,10 +421,10 @@ uip_connect(const uip_ipaddr_t *ripaddr, uint16_t rport)
 
   /* Find an unused local port. */
  again:
-  ++lastport;
+  ++uip_lastport;
 
-  if(lastport >= 32000) {
-    lastport = 4096;
+  if(uip_lastport < 32768) {
+    uip_lastport = 32768;
   }
 
   /* Check if this port is already in use, and if so try to find
@@ -432,7 +432,7 @@ uip_connect(const uip_ipaddr_t *ripaddr, uint16_t rport)
   for(c = 0; c < UIP_CONNS; ++c) {
     conn = &uip_conns[c];
     if(conn->tcpstateflags != UIP_CLOSED &&
-       conn->lport == uip_htons(lastport)) {
+       conn->lport == uip_htons(uip_lastport)) {
       goto again;
     }
   }
@@ -471,7 +471,7 @@ uip_connect(const uip_ipaddr_t *ripaddr, uint16_t rport)
   conn->rto = UIP_RTO;
   conn->sa = 0;
   conn->sv = 16;   /* Initial value of the RTT variance. */
-  conn->lport = uip_htons(lastport);
+  conn->lport = uip_htons(uip_lastport);
   conn->rport = rport;
   uip_ipaddr_copy(&conn->ripaddr, ripaddr);
 
@@ -487,14 +487,14 @@ uip_udp_new(const uip_ipaddr_t *ripaddr, uint16_t rport)
 
   /* Find an unused local port. */
  again:
-  ++lastport;
+  ++uip_lastport;
 
-  if(lastport >= 32000) {
-    lastport = 4096;
+  if(uip_lastport < 32768) {
+    uip_lastport = 32768;
   }
 
   for(c = 0; c < UIP_UDP_CONNS; ++c) {
-    if(uip_udp_conns[c].lport == uip_htons(lastport)) {
+    if(uip_udp_conns[c].lport == uip_htons(uip_lastport)) {
       goto again;
     }
   }
@@ -512,7 +512,7 @@ uip_udp_new(const uip_ipaddr_t *ripaddr, uint16_t rport)
     return 0;
   }
 
-  conn->lport = UIP_HTONS(lastport);
+  conn->lport = UIP_HTONS(uip_lastport);
   conn->rport = rport;
   if(ripaddr == NULL) {
     memset(&conn->ripaddr, 0, sizeof(uip_ipaddr_t));

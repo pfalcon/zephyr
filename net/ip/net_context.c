@@ -497,6 +497,12 @@ int net_context_tcp_init(struct net_context *context,
 		PRINT6ADDR((const uip_ipaddr_t *)&context->tuple.remote_addr->in_addr);
 		PRINTF(" port %d\n", context->tuple.remote_port);
 
+		/* Make sure uIP will use local port we selected. */
+		/* TODO: Redo better. */
+		extern uint16_t uip_lastport;
+
+		uip_lastport = context->tuple.local_port - 1;
+
 		tcp_connect((uip_ipaddr_t *)
 			    &context->tuple.remote_addr->in_addr,
 			    UIP_HTONS(context->tuple.remote_port),
