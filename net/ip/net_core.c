@@ -914,7 +914,7 @@ static void net_rx_fiber(void)
 		net_analyze_stack("RX fiber", rx_fiber_stack,
 				  sizeof(rx_fiber_stack));
 
-		NET_DBG("Received buf %p\n", buf);
+		NET_DBG("Received buf %p (len %u)\n", buf, buf->len);
 
 		if (!tcpip_input(buf)) {
 			ip_buf_unref(buf);
