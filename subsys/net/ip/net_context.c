@@ -796,6 +796,15 @@ static int tcp_hdr_len(struct net_pkt *pkt)
  */
 NET_CONN_CB(tcp_established)
 {
+#if 0
+	static int cnt;
+	if (cnt++ == 3) {
+		cnt = 0;
+		printk("Injected pkt drop\n");
+		return NET_DROP;
+	}
+#endif
+
 	struct net_context *context = (struct net_context *)user_data;
 	enum net_verdict ret;
 	u8_t tcp_flags;
@@ -1587,6 +1596,16 @@ static int send_data(struct net_context *context,
 	context->user_data = user_data;
 	net_pkt_set_token(pkt, token);
 
+#if 1
+	static int cnt;
+	if (cnt++ == 3) {
+		cnt = 0;
+		printk("Injected sent pkt drop\n");
+		net_pkt_unref(pkt);
+		return 0;
+	}
+#endif
+
 	if (net_context_get_ip_proto(context) == IPPROTO_UDP) {
 		return net_send_data(pkt);
 	}
@@ -1730,6 +1749,7 @@ static int sendto(struct net_pkt *pkt,
 
 #if defined(CONFIG_NET_TCP)
 	if (net_context_get_ip_proto(context) == IPPROTO_TCP) {
+//		net_pkt_set_appdatalen(pkt, net_pkt_get_len(pkt));
 		ret = net_tcp_queue_data(context, pkt);
 	} else
 #endif /* CONFIG_NET_TCP */
