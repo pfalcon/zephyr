@@ -194,6 +194,7 @@ def parse_args():
 def main():
     parse_args()
 
+    print(sys.getdefaultencoding(), file=sys.stderr)
     syscalls = analyze_headers(args.include)
     invocations = {}
     ids = []
