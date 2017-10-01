@@ -94,7 +94,7 @@ def analyze_headers(base_path):
             if not fn.endswith(".h") or path.endswith("toolchain/common.h"):
                 continue
 
-            with open(path, "r") as fp:
+            with open(path, "r", encoding="utf-8") as fp:
                 try:
                     result = [analyze_fn(mo.groups(), fn)
                               for mo in api_regex.finditer(fp.read())]
