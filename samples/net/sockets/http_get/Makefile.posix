@@ -4,7 +4,11 @@ INC = -I$(ZEPHYR_BASE)/include
 
 LIBPATH = $(ZEPHYR_BASE)/subsys/net/lib/zstream
 
-LIBSRC = $(LIBPATH)/zstream_sock.c
+LIBSRC = \
+    $(LIBPATH)/zstream_sock.c \
+    $(LIBPATH)/zstream_tls.c \
+
+LDLIBS = -lmbedtls -lmbedx509 -lmbedcrypto
 
 http_get: src/http_get.c
-	$(CC) $(INC) $(CFLAGS) $^ $(LIBSRC) -o $@
+	$(CC) $(INC) $(CFLAGS) $^ $(LIBSRC) $(LDLIBS) -o $@
