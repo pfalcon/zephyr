@@ -22,6 +22,9 @@
 
 #endif
 
+#include <net/zstream.h>
+#include <net/zstream_tls.h>
+
 #define PORT 4242
 
 int main(void)
@@ -45,15 +48,26 @@ int main(void)
 		struct sockaddr_in client_addr;
 		socklen_t client_addr_len = sizeof(client_addr);
 		char addr_str[32];
+		struct zstream_sock stream_sock;
+		struct zstream_tls stream_tls;
+		zstream stream;
 		int client = accept(serv, (struct sockaddr *)&client_addr,
 				    &client_addr_len);
 		inet_ntop(client_addr.sin_family, &client_addr.sin_addr,
 			  addr_str, sizeof(addr_str));
 		printf("Connection #%d from %s\n", counter++, addr_str);
+		zstream_sock_init(&stream_sock, client);
+		stream = (zstream)&stream_sock;
+
+		if (zstream_tls_init(&stream_tls, stream, true) < 0) {
+			printf("Error creating TLS connection\n");
+			goto error;
+		}
+		stream = (zstream)&stream_tls;
 
 		while (1) {
 			char buf[128], *p;
-			int len = recv(client, buf, sizeof(buf), 0);
+			int len = zstream_read(stream, buf, sizeof(buf));
 			int out_len;
 
 			if (len <= 0) {
@@ -65,7 +79,7 @@ int main(void)
 
 			p = buf;
 			do {
-				out_len = send(client, p, len, 0);
+				out_len = zstream_write(stream, p, len);
 				if (out_len < 0) {
 					printf("error: send: %d\n", errno);
 					goto error;
@@ -73,10 +87,15 @@ int main(void)
 				p += out_len;
 				len -= out_len;
 			} while (len);
+
+			if (zstream_flush(stream) < 0) {
+				printf("error: flush: %d\n", errno);
+				goto error;
+			}
 		}
 
 error:
-		close(client);
+		zstream_close(stream);
 		printf("Connection from %s closed\n", addr_str);
 	}
 }
