@@ -39,6 +39,9 @@ static inline ssize_t zstream_write(zstream stream, const void *buf, size_t size
 	return stream->api->write(stream, buf, size);
 }
 
+ssize_t zstream_writeall(zstream stream, const void *buf, size_t size,
+			 size_t *written);
+
 static inline ssize_t zstream_flush(zstream stream)
 {
 	return stream->api->flush(stream);
