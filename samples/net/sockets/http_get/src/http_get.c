@@ -22,6 +22,7 @@
 
 #endif
 
+#include <net/tls_conf.h>
 #include <net/zstream.h>
 #include <net/zstream_tls.h>
 
@@ -59,6 +60,12 @@ int main(void)
 	struct zstream_sock stream_sock;
 	struct zstream_tls stream_tls;
 	zstream stream;
+	mbedtls_ssl_config *tls_conf;
+
+	if (ztls_get_tls_client_conf(&tls_conf) < 0) {
+		printf("Unable to initialize TLS\n");
+		return 1;
+	}
 
 	printf("Preparing HTTP GET request for http://" HTTP_HOST
 	       ":" HTTP_PORT HTTP_PATH "\n");
@@ -91,7 +98,14 @@ int main(void)
 	stream = (zstream)&stream_sock;
 
 	/* Wrap socket stream into a TLS stream */
-	zstream_tls_init(&stream_tls, stream, false);
+	mbedtls_ssl_conf_authmode(tls_conf, MBEDTLS_SSL_VERIFY_NONE);
+	printf("Warning: site certificate is not validated\n");
+
+	st = zstream_tls_init(&stream_tls, stream, tls_conf, NULL);
+	if (st < 0) {
+		printf("Unable to create TLS connection\n");
+		return 1;
+	}
 	stream = (zstream)&stream_tls;
 
 	return http_request(stream);
