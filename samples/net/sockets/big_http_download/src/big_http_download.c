@@ -27,6 +27,7 @@
 
 #endif
 
+#include <net/tls_conf.h>
 #include <net/zstream.h>
 #include <net/zstream_tls.h>
 
@@ -125,7 +126,7 @@ void print_hex(const unsigned char *p, int len)
 	}
 }
 
-void download(struct addrinfo *ai, bool is_tls)
+void download(struct addrinfo *ai, mbedtls_ssl_config *tls_conf)
 {
 	int sock;
 	struct zstream_sock stream_sock;
@@ -142,8 +143,8 @@ void download(struct addrinfo *ai, bool is_tls)
 	zstream_sock_init(&stream_sock, sock);
 	stream = (zstream)&stream_sock;
 
-	if (is_tls) {
-		zstream_tls_init(&stream_tls, stream, false);
+	if (tls_conf) {
+		zstream_tls_init2(&stream_tls, stream, tls_conf, host);
 		stream = (zstream)&stream_tls;
 	}
 
@@ -208,15 +209,20 @@ int main(void)
 	char *p;
 	unsigned int total_bytes = 0;
 	bool is_tls;
+	mbedtls_ssl_config *tls_conf = NULL;
 
 	setbuf(stdout, NULL);
 
 	if (strncmp(download_url, "http://", SSTRLEN("http://")) == 0) {
-		is_tls = false;
 		port = "80";
 		p = download_url + SSTRLEN("http://");
 	} else if (strncmp(download_url, "https://", SSTRLEN("https://")) == 0) {
-		is_tls = true;
+		if (ztls_get_tls_client_conf(&tls_conf) < 0) {
+			printf("Unable to initialize TLS\n");
+			return 1;
+		}
+		mbedtls_ssl_conf_authmode(tls_conf, MBEDTLS_SSL_VERIFY_NONE);
+		printf("Warning: site certificate is not validated\n");
 		port = "443";
 		p = download_url + SSTRLEN("https://");
 	} else {
@@ -270,7 +276,7 @@ int main(void)
 	}
 
 	while (1) {
-		download(res, is_tls);
+		download(res, tls_conf);
 
 		total_bytes += cur_bytes;
 		printf("Total downloaded so far: %uMB\n", total_bytes / (1024 * 1024));
