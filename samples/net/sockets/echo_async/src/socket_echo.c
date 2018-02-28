@@ -25,8 +25,11 @@
 
 #endif
 
+#include <net/tls_conf.h>
 #include <net/zstream.h>
 #include <net/zstream_tls.h>
+
+#include "../../../echo_server/src/test_certs.h"
 
 /* For Zephyr, keep max number of fd's in sync with max poll() capacity */
 #ifdef CONFIG_NET_SOCKETS_POLL_MAX
@@ -44,6 +47,8 @@ struct pollfd pollfds[NUM_FDS];
 struct zstream_sock streams_sock[NUM_FDS];
 struct zstream_tls streams_tls[NUM_FDS];
 int pollnum;
+static mbedtls_ssl_config *tls_conf;
+static struct ztls_cert_key_pair cert_key;
 
 static void nonblock(int fd)
 {
@@ -79,7 +84,7 @@ found:
 		zstream_sock_init(&streams_sock[i], fd);
 		stream = (zstream)&streams_sock[i];
 
-		if (zstream_tls_init(&streams_tls[i], stream, true) < 0) {
+		if (zstream_tls_init2(&streams_tls[i], stream, tls_conf, NULL) < 0) {
 			printf("Error creating TLS connection\n");
 			return -1;
 		}
@@ -114,6 +119,27 @@ int main(void)
 		.sin6_port = htons(PORT),
 		.sin6_addr = IN6ADDR_ANY_INIT,
 	};
+
+	if (ztls_get_tls_server_conf(&tls_conf) < 0) {
+		printf("Unable to initialize TLS\n");
+		return 1;
+	}
+
+	res = ztls_parse_cert_key_pair(&cert_key,
+				       rsa_example_cert_der,
+				       rsa_example_cert_der_len,
+				       rsa_example_keypair_der,
+				       rsa_example_keypair_der_len);
+	if (res < 0) {
+		printf("Unable to parse cert/privkey\n");
+		return 1;
+	}
+
+	res = ztls_conf_add_own_cert_key_pair(tls_conf, &cert_key);
+	if (res < 0) {
+		printf("Unable to set cert/privkey\n");
+		return 1;
+	}
 
 	serv4 = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	res = bind(serv4, (struct sockaddr *)&bind_addr4, sizeof(bind_addr4));
