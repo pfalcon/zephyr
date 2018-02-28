@@ -22,8 +22,11 @@
 
 #endif
 
+#include <net/tls_conf.h>
 #include <net/zstream.h>
 #include <net/zstream_tls.h>
+
+#include "../../../echo_server/src/test_certs.h"
 
 #define PORT 4242
 
@@ -32,6 +35,30 @@ int main(void)
 	int serv;
 	struct sockaddr_in bind_addr;
 	static int counter;
+	mbedtls_ssl_config *tls_conf;
+	static struct ztls_cert_key_pair cert_key;
+	int res;
+
+	if (ztls_get_tls_server_conf(&tls_conf) < 0) {
+		printf("Unable to initialize TLS\n");
+		return 1;
+	}
+
+	res = ztls_parse_cert_key_pair(&cert_key,
+				       rsa_example_cert_der,
+				       rsa_example_cert_der_len,
+				       rsa_example_keypair_der,
+				       rsa_example_keypair_der_len);
+	if (res < 0) {
+		printf("Unable to parse cert/privkey\n");
+		return 1;
+	}
+
+	res = ztls_conf_add_own_cert_key_pair(tls_conf, &cert_key);
+	if (res < 0) {
+		printf("Unable to set cert/privkey\n");
+		return 1;
+	}
 
 	serv = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
@@ -59,7 +86,7 @@ int main(void)
 		zstream_sock_init(&stream_sock, client);
 		stream = (zstream)&stream_sock;
 
-		if (zstream_tls_init(&stream_tls, stream, true) < 0) {
+		if (zstream_tls_init2(&stream_tls, stream, tls_conf, NULL) < 0) {
 			printf("Error creating TLS connection\n");
 			goto error;
 		}
