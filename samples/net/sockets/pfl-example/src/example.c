@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #ifndef __ZEPHYR__
 
 #include <unistd.h>
@@ -13,6 +15,10 @@
 
 #endif
 
+#include <net/tls_conf.h>
+#include <net/zstream.h>
+#include <net/zstream_tls.h>
+
 static char msg[] = "Lorem ipsum dolor sit amet";
 static char response[sizeof(msg)] = {};
 
@@ -21,6 +27,11 @@ int main(void)
 	static struct addrinfo hints;
 	struct addrinfo *a;
 	int r, s;
+
+	struct zstream_sock stream_sock;
+	struct zstream_tls stream_tls;
+	struct zstream *stream;
+	mbedtls_ssl_config *tls_conf;
 
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
@@ -40,17 +51,35 @@ int main(void)
 		return r;
 	}
 
-	r = send(s, msg, sizeof(msg), 0);
+	zstream_sock_init(&stream_sock, s);
+	stream = (struct zstream *)&stream_sock;
+
+	if (ztls_get_tls_client_conf(&tls_conf) < 0) {
+		printf("Unable to initialize TLS config\n");
+		return 1;
+	}
+	mbedtls_ssl_conf_authmode(tls_conf, MBEDTLS_SSL_VERIFY_NONE);
+
+	r = zstream_tls_init(&stream_tls, stream, tls_conf, CONFIG_NET_APP_PEER_IPV4_ADDR);
+	if (r < 0) {
+		printf("Unable to initialize TLS\n");
+		return 1;
+	}
+	stream = (struct zstream *)&stream_tls;
+
+	r = zstream_write(stream, msg, sizeof(msg));
 	if (r != sizeof(msg)) {
 		return r;
 	}
 
-	r = recv(s, response, sizeof(response), 0);
+	r = zstream_read(stream, response, sizeof(response));
 	if (r != sizeof(msg)) {
 		return r;
 	}
 
 	close(s);
+
+	printf("success\n");
 
 	return 0;
 }
