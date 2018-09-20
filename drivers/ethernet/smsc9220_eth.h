@@ -21,6 +21,16 @@
 #ifndef _SMSC9220_ETH_H_
 #define _SMSC9220_ETH_H_
 
+#define __I
+#define __O
+#define __IO
+
+#define uint32_t u32_t
+#define uint16_t u16_t
+#define uint8_t u8_t
+
+#define wait_ms k_sleep
+
 /******************************************************************************/
 /*                       SMSC9220 Register Definitions                        */
 /******************************************************************************/
