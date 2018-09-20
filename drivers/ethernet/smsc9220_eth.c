@@ -23,10 +23,11 @@
  */
 
 #include <stdio.h>
+#include <zephyr.h>
 
-#include "mbed_retarget.h"
-#include "mbed_wait_api.h"
-#include "CM3DS.h"
+//#include "mbed_retarget.h"
+//#include "mbed_wait_api.h"
+//#include "CM3DS.h"
 #include "smsc9220_eth.h"
 
 #define REG_WRITE_TIME_OUT  50
