@@ -95,7 +95,9 @@ __IO  uint32_t  E2P_DATA;              //   EEPROM Data (offset 0xB4)
 #define SMSC9220_PHY_INTMASK    0x30
 #define SMSC9220_PHY_CS         0x31
 
-#define SMSC9220_BASE           0x40200000UL /* Ethernet SMSC9220 Base Address */
+#ifndef SMSC9220_BASE
+#define SMSC9220_BASE           SMSC_LAN9220_0_BASE_ADDRESS /* Ethernet SMSC9220 Base Address */
+#endif
 #define SMSC9220                ((SMSC9220_TypeDef    *) SMSC9220_BASE )
 
 enum smsc9220_interrupt_source {
