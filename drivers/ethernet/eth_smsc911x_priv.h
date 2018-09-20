@@ -21,6 +21,24 @@
 #ifndef _SMSC9220_ETH_H_
 #define _SMSC9220_ETH_H_
 
+#ifndef __I
+#define __I
+#endif
+#ifndef __O
+#define __O
+#endif
+#ifndef __IO
+#define __IO
+#endif
+
+#define uint32_t u32_t
+#define uint16_t u16_t
+#define uint8_t u8_t
+
+#define GET_BITFIELD(val, lsb, msb) (((val) >> (lsb)) & ((1 << ((msb) - (lsb) + 1)) - 1))
+#define BFIELD(val, name) GET_BITFIELD(val, name ## _Lsb, name ## _Msb)
+#define SMSC9220_BFIELD(reg, bfield) BFIELD(SMSC9220->reg, reg ## _ ## bfield)
+
 /******************************************************************************/
 /*                       SMSC9220 Register Definitions                        */
 /******************************************************************************/
@@ -63,7 +81,7 @@ __IO  uint32_t  TX_CFG;
 /*   Hardware Configuration (offset 0x74) */
 __IO  uint32_t  HW_CFG;
 /*   RX Datapath Control (offset 0x78) */
-__IO  uint32_t  RX_DP_CTL;
+__IO  uint32_t  RX_DP_CTRL;
 /*   Receive FIFO Information (offset 0x7C) */
 __I   uint32_t  RX_FIFO_INF;
 /*   Transmit FIFO Information (offset 0x80) */
@@ -97,6 +115,36 @@ __IO  uint32_t  E2P_DATA;
 
 } SMSC9220_TypeDef;
 
+#define HW_CFG_SRST BIT(0)
+
+#define RX_STAT_PORT_PKT_LEN_Lsb 16
+#define RX_STAT_PORT_PKT_LEN_Msb 29
+
+#define PMT_CTRL_READY BIT(0)
+
+#define RX_DP_CTRL_RX_FFWD BIT(31)
+
+#define RX_FIFO_INF_RXSUSED_Lsb 16
+#define RX_FIFO_INF_RXSUSED_Msb 23
+#define RX_FIFO_INF_RXDUSED_Lsb 0
+#define RX_FIFO_INF_RXDUSED_Msb 15
+
+#define MAC_CSR_CMD_BUSY  BIT(31)
+#define MAC_CSR_CMD_READ  BIT(30)
+#define MAC_CSR_CMD_WRITE 0
+
+#if 0
+void smsc9220_wakeup(void)
+{
+/* LAN9118 Datasheet 3.10.2.1*/
+/*
+A write to the BYTE_TEST register, regardless of whether a wake-up frame or Magic Packet was detected, will return
+LAN9118 to the D0 state and will reset the PM_MODE field to the D0 state. As noted above, the host is required to check
+the READY bit and verify that it is set before attempting any other reads or writes of the device.
+*/
+}
+#endif
+
 /* SMSC9220 MAC Registers       Indices */
 #define SMSC9220_MAC_CR         0x1
 #define SMSC9220_MAC_ADDRH      0x2
@@ -111,6 +159,10 @@ __IO  uint32_t  E2P_DATA;
 #define SMSC9220_MAC_WUFF       0xB
 #define SMSC9220_MAC_WUCSR      0xC
 
+#define MAC_MII_ACC_MIIBZY BIT(0)
+#define MAC_MII_ACC_WRITE  BIT(1)
+#define MAC_MII_ACC_READ   0
+
 /* SMSC9220 PHY Registers       Indices */
 #define SMSC9220_PHY_BCONTROL   0x0
 #define SMSC9220_PHY_BSTATUS    0x1
@@ -119,15 +171,17 @@ __IO  uint32_t  E2P_DATA;
 #define SMSC9220_PHY_ANEG_ADV   0x4
 #define SMSC9220_PHY_ANEG_LPA   0x5
 #define SMSC9220_PHY_ANEG_EXP   0x6
-#define SMSC9220_PHY_MCONTROL   0x17
-#define SMSC9220_PHY_MSTATUS    0x18
-#define SMSC9220_PHY_CSINDICATE 0x27
-#define SMSC9220_PHY_INTSRC     0x29
-#define SMSC9220_PHY_INTMASK    0x30
-#define SMSC9220_PHY_CS         0x31
+#define SMSC9220_PHY_MCONTROL   17
+#define SMSC9220_PHY_MSTATUS    18
+#define SMSC9220_PHY_CSINDICATE 27
+#define SMSC9220_PHY_INTSRC     29
+#define SMSC9220_PHY_INTMASK    30
+#define SMSC9220_PHY_CS         31
 
-#define SMSC9220_BASE           0x40200000UL /* Ethernet SMSC9220 Base Address */
-#define SMSC9220                ((SMSC9220_TypeDef    *) SMSC9220_BASE )
+#ifndef SMSC9220_BASE
+#define SMSC9220_BASE           DT_SMSC_LAN9220_0_BASE_ADDRESS /* Ethernet SMSC9220 Base Address */
+#endif
+#define SMSC9220                ((volatile SMSC9220_TypeDef *) SMSC9220_BASE)
 
 enum smsc9220_interrupt_source {
     enum_smsc9220_interrupt_gpio0 = 0,
