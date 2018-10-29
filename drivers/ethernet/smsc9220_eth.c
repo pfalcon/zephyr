@@ -417,7 +417,8 @@ static int smsc9220_check_id(void)
         return 1;
     }
     switch(((id >> 16) & 0xFFFF)) {
-        case 0x9220:
+        case 0x9220: /* Real hardware */
+        case 0x0118: /* QEMU emulation */
             break;
 
         default:
