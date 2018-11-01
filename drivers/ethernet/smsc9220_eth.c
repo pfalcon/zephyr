@@ -312,7 +312,8 @@ static void smsc9220_init_irqs(void)
 {
     SMSC9220->INT_EN = 0x0;
     SMSC9220->INT_STS = 0xFFFFFFFF;   /* clear all interrupts */
-    SMSC9220->IRQ_CFG = 0x22000100;   /* irq deassertion at 220 usecs and master IRQ enable. */
+    // Polarity config which works with Zephyr OOB
+    SMSC9220->IRQ_CFG = 0x22000111;   /* irq deassertion at 220 usecs and master IRQ enable. */
 }
 
 /**
