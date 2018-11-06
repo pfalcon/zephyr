@@ -1,0 +1,11 @@
+#
+# Copyright (c) 2018 ...
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+menuconfig ETH_SMSC9220
+	bool "SMSC9220 Ethernet driver"
+	depends on NET_L2_ETHERNET
+	help
+	  !!!Enable Synopsys DesignWare Ethernet driver.
