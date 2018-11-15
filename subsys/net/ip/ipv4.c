@@ -116,6 +116,10 @@ enum net_verdict net_ipv4_process_pkt(struct net_pkt *pkt)
 	int real_len = net_pkt_get_len(pkt);
 	int pkt_len = ntohs(hdr->len);
 	enum net_verdict verdict = NET_DROP;
+LOG_INF("net_ipv4_process_pkt");
+NET_INFO("net_ipv4_process_pkt");
+LOG_DBG("net_ipv4_process_pkt");
+NET_DBG("net_ipv4_process_pkt");
 
 	if (real_len != pkt_len) {
 		NET_DBG("IPv4 packet size %d pkt len %d", pkt_len, real_len);
