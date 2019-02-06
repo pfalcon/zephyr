@@ -10,6 +10,10 @@
 extern "C" {
 #endif
 
+#include <sys/timespec.h>
+#include <sys/_timeval.h>
+
+#if 0
 struct timespec {
 	signed int  tv_sec;
 	signed int  tv_nsec;
@@ -24,6 +28,7 @@ struct timeval {
 	signed int  tv_sec;
 	signed int  tv_usec;
 };
+#endif
 
 #include <kernel.h>
 #include <errno.h>
