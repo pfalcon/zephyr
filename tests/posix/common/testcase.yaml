@@ -2,4 +2,8 @@ tests:
   portability.posix:
     tags: posix
     min_ram: 64
-    arch_exclude: posix
+    # Currently, POSIX subsystem and "posix" pseudo-arch don't work well
+    # together. This is supposed to be addressed later.
+    # riscv toolchain lacks sys/timespec.h (maybe something else), so not
+    # good for POSIX.
+    arch_exclude: posix riscv32
