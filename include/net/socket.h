@@ -208,6 +208,14 @@ __syscall int z_zsock_getaddrinfo_internal(const char *host,
 					   const struct zsock_addrinfo *hints,
 					   struct zsock_addrinfo *res);
 
+#define AI_PASSIVE 1
+#define AI_CANONNAME 2
+#define AI_NUMERICHOST 4
+#define AI_V4MAPPED 8
+#define AI_ALL 0x10
+#define AI_ADDRCONFIG 0x20
+#define AI_NUMERICSERV 0x400
+
 int zsock_getaddrinfo(const char *host, const char *service,
 		      const struct zsock_addrinfo *hints,
 		      struct zsock_addrinfo **res);
