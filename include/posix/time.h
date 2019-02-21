@@ -63,8 +63,6 @@ int timer_gettime(timer_t timerid, struct itimerspec *its);
 int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
 		  struct itimerspec *ovalue);
 
-int gettimeofday(struct timeval *tv, const void *tz);
-
 #ifdef __cplusplus
 }
 #endif
