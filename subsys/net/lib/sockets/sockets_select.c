@@ -196,3 +196,7 @@ int zsock_select(int nfds, zsock_fd_set *readfds, zsock_fd_set *writefds,
 
 	return num_selects;
 }
+
+#ifdef CONFIG_POSIX_HEADERS
+FUNC_ALIAS(zsock_select, select, int);
+#endif
