@@ -2425,15 +2425,6 @@ NET_CONN_CB(tcp_syn_rcvd)
 			return NET_DROP;
 		}
 
-		/* TCP context is effectively owned by both application
-		 * and the stack: stack may detect that peer closed/aborted
-		 * connection, but it must not dispose of the context behind
-		 * the application back. Likewise, when application "closes"
-		 * context, it's not disposed of immediately - there's yet
-		 * closing handshake for stack to perform.
-		 */
-		net_context_ref(new_context);
-
 		context->tcp->accept_cb(new_context,
 					&new_context->remote,
 					addrlen,
