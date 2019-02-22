@@ -28,6 +28,14 @@ struct getaddrinfo_state {
 	struct zsock_addrinfo *ai_arr;
 };
 
+#define SET_ADDRINFO(res, addr) { \
+		res->ai_addr = &res->_ai_addr; \
+		res->ai_addrlen = sizeof(*addr); \
+		res->ai_canonname = res->_ai_canonname; \
+		*res->_ai_canonname = 0; \
+		res->ai_next = NULL; \
+	}
+
 static void dns_resolve_cb(enum dns_resolve_status status,
 			   struct dns_addrinfo *info, void *user_data)
 {
@@ -79,6 +87,26 @@ static void dns_resolve_cb(enum dns_resolve_status status,
 	state->idx++;
 }
 
+static int getaddrinfo_null_host(int port, const struct zsock_addrinfo *hints,
+				struct zsock_addrinfo *res)
+{
+	if (hints && (hints->ai_flags & AI_PASSIVE)) {
+		struct sockaddr_in *addr =
+		    (struct sockaddr_in *)&res->_ai_addr;
+		addr->sin_addr.s_addr = INADDR_ANY;
+		addr->sin_port = htons(port);
+		addr->sin_family = AF_INET;
+		SET_ADDRINFO(res, addr);
+		res->ai_family = AF_INET;
+		res->ai_socktype = SOCK_STREAM;
+		res->ai_protocol = IPPROTO_TCP;
+		return 0;
+	}
+
+	/* IN6ADDR_ANY_INIT */
+
+	return DNS_EAI_FAIL;
+}
 
 int _impl_z_zsock_getaddrinfo_internal(const char *host, const char *service,
 				       const struct zsock_addrinfo *hints,
@@ -100,6 +128,10 @@ int _impl_z_zsock_getaddrinfo_internal(const char *host, const char *service,
 		if (port < 1 || port > 65535) {
 			return DNS_EAI_NONAME;
 		}
+	}
+
+	if (host == NULL) {
+		return getaddrinfo_null_host(port, hints, res);
 	}
 
 	ai_state.hints = hints;
