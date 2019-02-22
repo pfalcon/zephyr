@@ -292,6 +292,17 @@ int net_context_get(sa_family_t family,
 		contexts[i].flags |= NET_CONTEXT_IN_USE;
 		*context = &contexts[i];
 
+		/* TCP context is effectively owned by both application
+		 * and the stack: stack may detect that peer closed/aborted
+		 * connection, but it must not dispose of the context behind
+		 * the application back. Likewise, when application "closes"
+		 * context, it's not disposed of immediately - there's yet
+		 * closing handshake for stack to perform.
+		 */
+		if (ip_proto == IPPROTO_TCP) {
+			net_context_ref(*context);
+		}
+
 		ret = 0;
 		break;
 	}
