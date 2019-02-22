@@ -6,6 +6,7 @@
 
 /* libc headers */
 #include <stdlib.h>
+#include <ctype.h>
 
 /* Zephyr headers */
 #include <logging/log.h>
@@ -132,6 +133,23 @@ int _impl_z_zsock_getaddrinfo_internal(const char *host, const char *service,
 
 	if (host == NULL) {
 		return getaddrinfo_null_host(port, hints, res);
+	}
+
+	if (host && isdigit((int)*host)) {
+		struct sockaddr_in *addr =
+		    (struct sockaddr_in *)&res->_ai_addr;
+		zsock_inet_pton(AF_INET, host, &addr->sin_addr);
+		addr->sin_port = htons(port);
+		addr->sin_family = AF_INET;
+		res->ai_addr = &res->_ai_addr;
+		res->ai_addrlen = sizeof(*addr);
+		res->ai_family = AF_INET;
+		res->ai_socktype = SOCK_STREAM;
+		res->ai_protocol = IPPROTO_TCP;
+		res->ai_canonname = res->_ai_canonname;
+		*res->_ai_canonname = 0;
+		res->ai_next = NULL;
+		return 0;
 	}
 
 	ai_state.hints = hints;
