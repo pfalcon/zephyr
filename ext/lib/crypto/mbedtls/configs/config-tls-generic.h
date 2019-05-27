@@ -11,6 +11,9 @@
 #ifndef MBEDTLS_CONFIG_H
 #define MBEDTLS_CONFIG_H
 
+// HACK: workaround to get GoogleIoT SDK running
+#define MBEDTLS_TEST_NULL_ENTROPY
+
 /* System support */
 #define MBEDTLS_PLATFORM_C
 #define MBEDTLS_PLATFORM_MEMORY
