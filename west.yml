@@ -25,6 +25,8 @@ manifest:
   remotes:
     - name: upstream
       url-base: https://github.com/zephyrproject-rtos
+    - name: google-cloud-platform
+      url-base: https://github.com/GoogleCloudPlatform
 
   #
   # Please add items below based on alphabetical order
@@ -77,6 +79,10 @@ manifest:
     - name: tinycbor
       path: modules/lib/tinycbor
       revision: 31ae89e4b768612722620cb6cb173a0de4a19cc9
+    - name: iot-device-sdk-embedded-c
+      remote: google-cloud-platform
+      path: modules/lib/google/iot-device-sdk-embedded-c
+      revision: c093a1693977d3007d00d7e4b80ee9a7443fe22b
 
   self:
     path: zephyr
