@@ -23,6 +23,8 @@ manifest:
       url-base: https://github.com/zephyrproject-rtos
     - name: civetweb
       url-base: https://github.com/civetweb
+    - name: google-cloud-platform
+      url-base: https://github.com/GoogleCloudPlatform
 
   #
   # Please add items below based on alphabetical order
@@ -88,6 +90,10 @@ manifest:
     - name: littlefs
       path: modules/fs/littlefs
       revision: fe9572dd5a9fcf93a249daa4233012692bd2881d
+    - name: iot-device-sdk-embedded-c
+      remote: google-cloud-platform
+      path: modules/lib/google/iot-device-sdk-embedded-c
+      revision: c093a1693977d3007d00d7e4b80ee9a7443fe22b
 
   self:
     path: zephyr
