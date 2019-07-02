@@ -23,11 +23,6 @@
 #include "iotc_macros.h"
 #include <errno.h>
 
-int* z_impl_z_errno(void) {
-  static int workaround_fake_errno_just_for_linkage = -1;
-  return &workaround_fake_errno_just_for_linkage;
-}
-
 #ifndef MAX
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
 #endif
