@@ -1,3 +1,8 @@
+/* Copyright 2019 Google LLC
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 #include <iotc_error.h>
 #include <iotc_jwt.h>
 #include <stdio.h>
