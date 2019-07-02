@@ -1,0 +1,9 @@
+# Copyright 2018-2019 Google LLC
+#
+# SPDX-License-Identifier: Apache-2.0
+
+config GOOGLE_IOT_DEVICE_SDK
+	bool "Google IoT Device SDK support"
+	help
+	  This option enables the Google MQTT IoT connectivity.
+
