@@ -1,3 +1,8 @@
+/* Copyright 2019 Google LLC
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 #define PRIVATE_KEY_BUFFER_SIZE 256
 
 #include <iotc.h>
