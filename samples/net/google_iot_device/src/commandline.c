@@ -1,3 +1,8 @@
+/* Copyright 2019 Google LLC
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 /*
  * This module implements a command line argument parser
  */
