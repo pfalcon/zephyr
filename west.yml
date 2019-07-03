@@ -82,7 +82,7 @@ manifest:
     - name: iot-device-sdk-embedded-c
       remote: google-cloud-platform
       path: modules/lib/google/iot-device-sdk-embedded-c
-      revision: 951701408a811c5436ae5a2a27063211ed0a428b
+      revision: 2bddc7cd4af0a7993aad27843a7d68e3c613af52
 
   self:
     path: zephyr
