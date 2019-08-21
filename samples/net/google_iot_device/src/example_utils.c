@@ -17,6 +17,7 @@ extern iotc_crypto_key_data_t iotc_connect_private_key_data;
 static iotc_timed_task_handle_t delayed_publish_task =
     IOTC_INVALID_TIMED_TASK_HANDLE;
 
+#if 0
 int iotc_example_handle_command_line_args(int argc, char* argv[]) {
   char options[] = "h:p:d:t:m:f:";
   int missingparameter = 0;
@@ -100,6 +101,7 @@ int load_ec_private_key_pem_from_posix_fs(char* buf_ec_private_key_pem,
 
   return 0;
 }
+#endif
 
 void on_connection_state_changed(iotc_context_handle_t in_context_handle,
                                  void* data, iotc_state_t state) {

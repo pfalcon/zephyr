@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#include <cmdline.h>
 #include <string.h>
 #include <zephyr.h>
 
@@ -16,6 +15,9 @@
 iotc_crypto_key_data_t iotc_connect_private_key_data;
 char ec_private_key_pem[PRIVATE_KEY_BUFFER_SIZE] = {0};
 
+static int load_ec_private_key_pem(char* buf_ec_private_key_pem,
+                                   size_t buf_len);
+
 void main(void) {
   printk("Example for Zephyr port.\n");
 
@@ -26,6 +28,7 @@ void main(void) {
     DeviceID>/state
     */
 
+#if 0
   int argc = 0;
   char** argv = NULL;
 
@@ -42,9 +45,10 @@ void main(void) {
   if (0 != iotc_example_handle_command_line_args(argc, argv)) {
     return;
   }
+#endif
 
-  if (0 != load_ec_private_key_pem_from_posix_fs(ec_private_key_pem,
-                                                 PRIVATE_KEY_BUFFER_SIZE)) {
+  if (0 != load_ec_private_key_pem(ec_private_key_pem,
+                                   PRIVATE_KEY_BUFFER_SIZE)) {
     printk("\nApplication exiting due to private key load error.\n\n");
     return;
   }
@@ -93,4 +97,12 @@ void main(void) {
 
   /* Cleanup internal allocations that were created by iotc_initialize. */
   iotc_shutdown();
+}
+
+static int load_ec_private_key_pem(char* buf_ec_private_key_pem,
+                                   size_t buf_len) {
+  extern const char* iotc_private_key_pem;
+  strncpy(buf_ec_private_key_pem, iotc_private_key_pem, buf_len);
+  buf_ec_private_key_pem[buf_len - 1] = 0;
+  return 0;
 }
