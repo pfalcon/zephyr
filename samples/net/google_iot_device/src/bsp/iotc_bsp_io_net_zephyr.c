@@ -4,6 +4,7 @@
  */
 
 #include <iotc_bsp_io_net.h>
+#include <iotc_bsp_debug.h>
 
 #include <fcntl.h>
 #include <net/socket.h>
@@ -169,7 +170,14 @@ iotc_bsp_io_net_state_t iotc_bsp_io_net_close_socket(
 iotc_bsp_io_net_state_t iotc_bsp_io_net_select(
     iotc_bsp_socket_events_t* socket_events_array,
     size_t socket_events_array_size, long timeout_sec) {
-  struct pollfd fds[1];  // note: single socket support
+  struct pollfd fds[1] = {0};  // note: single socket support
+
+  /* currently, only one socket (connection) is supported */
+  if (socket_events_array_size > 1) {
+    iotc_bsp_debug_format("Error: only one connection is currently supported (%ld)\n",
+        socket_events_array_size);
+    return IOTC_BSP_IO_NET_STATE_ERROR;
+  }
 
   /* translate the library socket events settings to the event sets used by
    * Zephyr poll mechanism
@@ -198,9 +206,9 @@ iotc_bsp_io_net_state_t iotc_bsp_io_net_select(
   }
 
   /* call the actual posix select */
-  const int result = poll(fds, 1, timeout_sec);
+  const int result = poll(fds, socket_events_array_size, timeout_sec);
 
-  if (0 < result) {
+  if (socket_events_array_size == 0 || 0 < result) {
     /* translate the result back to the socket events structure */
     for (socket_id = 0; socket_id < socket_events_array_size; ++socket_id) {
       iotc_bsp_socket_events_t* socket_events = &socket_events_array[socket_id];
