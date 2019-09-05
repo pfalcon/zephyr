@@ -1,0 +1,24 @@
+/* Copyright 2019 Google LLC
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include "config.h"
+
+/* CHANGE THIS */
+const char* iotc_project_id = "<GCP IoT Core Project ID>";
+/* CHANGE THIS */
+const char* iotc_device_path = "projects/<GCP IoT Core Project ID>/locations/<Region>/registries/<GCP IoT Core Registry ID>/devices/<GCP IoT Core Device ID>";
+/* CHANGE THIS */
+const char* iotc_publish_topic = "/devices/<GCP IoT Core Device ID>/state";
+/* CHANGE THIS*/
+const char* iotc_private_key_pem =
+"-----BEGIN EC PRIVATE KEY-----\n"
+"use\n"
+"your\n"
+"key\n"
+"-----END EC PRIVATE KEY-----\n";
+
+const char* iotc_publish_message = "Hello from Zephyr!";
+
+iotc_mqtt_qos_t iotc_example_qos = IOTC_MQTT_QOS_AT_LEAST_ONCE;

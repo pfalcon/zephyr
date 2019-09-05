@@ -7,20 +7,13 @@
 
 #include <iotc.h>
 
-/* Parses and manages commandline arguments. Project id, device path and publish
- * topic are require to be passed as command line arguments. Prints
- * notification if either of these is not found.
- */
-int iotc_example_handle_command_line_args(int argc, char* argv[]);
-
-/* Attempts to load the client's identifying private key from disk so that the
+/* Attempts to load the client's identifying private key so that the
    byte data may be passed to the 'iotc_connect function'.  Please note that the
    IoTC API and Board Support Package have various means to use private keys.
    This example assumes the use of one that must be provided to a TLS
    implementation in a buffer, but secure chips with slot-based key stores can
    also be used. Please see the Crypto BSP for more information. */
-int load_ec_private_key_pem_from_posix_fs(char* buf_ec_private_key_pem,
-                                          size_t buf_len);
+int load_ec_private_key_pem(char* buf_ec_private_key_pem, size_t buf_len);
 
 /* A callback function that will be invoked whenever the connection state
    has changed.
@@ -61,8 +54,8 @@ int load_ec_private_key_pem_from_posix_fs(char* buf_ec_private_key_pem,
 void on_connection_state_changed(iotc_context_handle_t in_context_handle,
                                  void* data, iotc_state_t state);
 
-/* A function that publishes to the topic that was specified in the command
-   line parameters of the application. This is invoked directly upon connect
+/* A function that publishes to the topic that was specified in the config
+   parameters of the application. This is invoked directly upon connect
    in the 'on_connection_state_changed' function, but also by the IoTC Client's
    event system on a 5 second interval. */
 void publish_function(iotc_context_handle_t context_handle,

@@ -90,16 +90,10 @@ in a Zephyr github repo clone in github/atigyi account
 - `west update`
 - `export ZEPHYR_TOOLCHAIN_VARIANT=zephyr`
 - `cd zephyr/samples/net/google_iot_device`
+- Copy template file `config.c.in` to `config.c`, and fill in Google Cloud
+  connection parameters (read comments there).
 - `west build -b native_posix -- -G'Unix Makefiles'`
-- provide an ECDSA private key in PEM format in the CWD in a file
-  named `ec_private.pem`. This private key is associated with the
-  Goolge IoT Device the sample app will impersonate.
-- `./build/zephyr/zephyr.exe -testargs -p [GOOGLE_CLOUD_PROJECT_ID] -d
-  [GOOGLE_CLOUD_DEVICE_PATH] -t [GOOGLE_CLOUD_PUBLIS_TOPIC]`
-- example command: `./build/zephyr/zephyr.exe -testargs -p
-  macr-o-matic-3100t -d
-  projects/macr-o-matic-3100t/locations/europe-west1/registries/garage-door-meters/devices/sz11-front-reel
-  -t /devices/sz11-front-reel/state`
+- Run the application: `./build/zephyr/zephyr.exe`
 
 See `Google Cloud MQTT Documentation
 <https://cloud.google.com/iot/docs/how-tos/mqtt-bridge>`_.

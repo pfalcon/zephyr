@@ -3,11 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#include <cmdline.h>
 #include <string.h>
 #include <zephyr.h>
 
-#include "commandline.h"
+#include "config.h"
 #include "example_utils.h"
 #include <iotc.h>
 #include <iotc_jwt.h>
@@ -19,32 +18,8 @@ char ec_private_key_pem[PRIVATE_KEY_BUFFER_SIZE] = {0};
 void main(void) {
   printk("Example for Zephyr port.\n");
 
-  /* commandline sample:
-    zephyr.exe -testargs -p <GCP IoT Core Project ID> -d projects/<GCP IoT Core
-    Project ID>/locations/<Region>/registries/<GCP IoT Core Registry
-    ID>/devices/<GCP IoT Core Device ID> -t /devices/<GCP IoT Core
-    DeviceID>/state
-    */
-
-  int argc = 0;
-  char** argv = NULL;
-
-  native_get_cmd_line_args(&argc, &argv);
-
-  /* Zephyr passes the "-testargs" internal command line argument too. This code
-   * skips it to be compatible to the native command line argument handlin. */
-  if (1 < argc && 0 == strcmp(argv[1], "-testargs")) {
-    --argc;
-    ++argv;
-  }
-
-  /* parsing GCP IoT related command line arguments */
-  if (0 != iotc_example_handle_command_line_args(argc, argv)) {
-    return;
-  }
-
-  if (0 != load_ec_private_key_pem_from_posix_fs(ec_private_key_pem,
-                                                 PRIVATE_KEY_BUFFER_SIZE)) {
+  if (0 != load_ec_private_key_pem(ec_private_key_pem,
+                                   PRIVATE_KEY_BUFFER_SIZE)) {
     printk("\nApplication exiting due to private key load error.\n\n");
     return;
   }
@@ -93,4 +68,10 @@ void main(void) {
 
   /* Cleanup internal allocations that were created by iotc_initialize. */
   iotc_shutdown();
+}
+
+int load_ec_private_key_pem(char* buf_ec_private_key_pem, size_t buf_len) {
+  strncpy(buf_ec_private_key_pem, iotc_private_key_pem, buf_len);
+  buf_ec_private_key_pem[buf_len - 1] = 0;
+  return 0;
 }

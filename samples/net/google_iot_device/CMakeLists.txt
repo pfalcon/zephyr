@@ -22,7 +22,7 @@ add_compile_definitions(IOTC_DISABLE_CERTVERIFY)
 
 target_sources(app PRIVATE
 	src/main.c
-	src/commandline.c
+	src/config.c
 	src/example_utils.c
 	src/bsp/iotc_bsp_tls_mbedtls.c
 	src/bsp/iotc_bsp_crypto_mbedtls.c
