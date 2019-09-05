@@ -184,16 +184,16 @@ iotc_bsp_io_net_state_t iotc_bsp_io_net_select(
     }
 
     if (1 == socket_events->in_socket_want_read) {
-      FD_SET(socket_events->iotc_socket, ZSOCK_POLLIN, fds[0]);
+      FD_SET(socket_events->iotc_socket, POLLIN, fds[0]);
     }
 
     if ((1 == socket_events->in_socket_want_write) ||
         (1 == socket_events->in_socket_want_connect)) {
-      FD_SET(socket_events->iotc_socket, ZSOCK_POLLOUT, fds[0]);
+      FD_SET(socket_events->iotc_socket, POLLOUT, fds[0]);
     }
 
     if (1 == socket_events->in_socket_want_error) {
-      FD_SET(socket_events->iotc_socket, ZSOCK_POLLERR, fds[0]);
+      FD_SET(socket_events->iotc_socket, POLLERR, fds[0]);
     }
   }
 
@@ -205,11 +205,11 @@ iotc_bsp_io_net_state_t iotc_bsp_io_net_select(
     for (socket_id = 0; socket_id < socket_events_array_size; ++socket_id) {
       iotc_bsp_socket_events_t* socket_events = &socket_events_array[socket_id];
 
-      if (FD_ISSET(ZSOCK_POLLIN, fds[0])) {
+      if (FD_ISSET(POLLIN, fds[0])) {
         socket_events->out_socket_can_read = 1;
       }
 
-      if (FD_ISSET(ZSOCK_POLLOUT, fds[0])) {
+      if (FD_ISSET(POLLOUT, fds[0])) {
         if (1 == socket_events->in_socket_want_connect) {
           socket_events->out_socket_connect_finished = 1;
         }
@@ -219,7 +219,7 @@ iotc_bsp_io_net_state_t iotc_bsp_io_net_select(
         }
       }
 
-      if (FD_ISSET(ZSOCK_POLLERR, fds[0])) {
+      if (FD_ISSET(POLLERR, fds[0])) {
         socket_events->out_socket_error = 1;
       }
     }
