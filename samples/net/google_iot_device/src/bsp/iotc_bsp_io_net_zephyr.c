@@ -7,7 +7,14 @@
 #include <iotc_bsp_debug.h>
 
 #include <fcntl.h>
+#ifdef CONFIG_POSIX_API
+#include <unistd.h>
+#include <sys/socket.h>
+#include <poll.h>
+#include <netdb.h>
+#else
 #include <net/socket.h>
+#endif
 #include <stdio.h>
 
 #include "iotc_macros.h"
