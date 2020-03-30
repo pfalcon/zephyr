@@ -35,21 +35,29 @@
 
 /* This URL is parsed in-place, so buffer must be non-const. */
 static char download_url[] =
+#if defined(CONFIG_SAMPLE_BIG_HTTP_DL_URL)
+    CONFIG_SAMPLE_BIG_HTTP_DL_URL;
+#else
 #if !defined(CONFIG_NET_SOCKETS_SOCKOPT_TLS)
     "http://archive.ubuntu.com/ubuntu/dists/xenial/main/installer-amd64/current/images/hd-media/vmlinuz";
 #else
     "https://www.7-zip.org/a/7z1805.exe";
 #endif /* !defined(CONFIG_NET_SOCKETS_SOCKOPT_TLS) */
+#endif /* defined(CONFIG_SAMPLE_BIG_HTTP_DL_URL) */
 /* Quick testing. */
 /*    "http://google.com/foo";*/
 
 /* print("".join(["\\x%02x" % x for x in list(binascii.unhexlify("hash"))])) */
 static uint8_t download_hash[32] =
+#if defined(CONFIG_SAMPLE_BIG_HTTP_DL_HASH)
+    CONFIG_SAMPLE_BIG_HTTP_DL_HASH;
+#else
 #if !defined(CONFIG_NET_SOCKETS_SOCKOPT_TLS)
 "\x33\x7c\x37\xd7\xec\x00\x34\x84\x14\x22\x4b\xaa\x6b\xdb\x2d\x43\xf2\xa3\x4e\xf5\x67\x6b\xaf\xcd\xca\xd9\x16\xf1\x48\xb5\xb3\x17";
 #else
 "\x64\x7a\x9a\x62\x11\x62\xcd\x7a\x50\x08\x93\x4a\x08\xe2\x3f\xf7\xc1\x13\x5d\x6f\x12\x61\x68\x9f\xd9\x54\xaa\x17\xd5\x0f\x97\x29";
 #endif /* !defined(CONFIG_NET_SOCKETS_SOCKOPT_TLS) */
+#endif /* defined(CONFIG_SAMPLE_BIG_HTTP_DL_HASH) */
 
 #define SSTRLEN(s) (sizeof(s) - 1)
 #define CHECK(r) { if (r == -1) { printf("Error: " #r "\n"); exit(1); } }

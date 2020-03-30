@@ -1,0 +1,21 @@
+# Private config options for big_http_download sample
+
+# Copyright (c) 2020 Linaro Limited
+# SPDX-License-Identifier: Apache-2.0
+
+mainmenu "big_http_download sample application"
+
+config SAMPLE_BIG_HTTP_DL_URL
+	string "Download URL"
+	default "http://archive.ubuntu.com/ubuntu/dists/xenial/main/installer-amd64/current/images/hd-media/vmlinuz"
+	help
+	  URL to download.
+
+config SAMPLE_BIG_HTTP_DL_HASH
+	string "Hash of downloaded file"
+	default "\x33\x7c\x37\xd7\xec\x00\x34\x84\x14\x22\x4b\xaa\x6b\xdb\x2d\x43\xf2\xa3\x4e\xf5\x67\x6b\xaf\xcd\xca\xd9\x16\xf1\x48\xb5\xb3\x17"
+	help
+	  SHA-256 hash of the download file, as a binary string, in C escapes
+	  format (e.g. "\x00\xff...").
+
+source "Kconfig.zephyr"
