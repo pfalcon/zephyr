@@ -180,6 +180,7 @@ int _read(int fd, char *buf, int nbytes)
 }
 __weak FUNC_ALIAS(_read, read, int);
 
+#if 0
 int _write(int fd, const void *buf, int nbytes)
 {
 	ARG_UNUSED(fd);
@@ -187,6 +188,7 @@ int _write(int fd, const void *buf, int nbytes)
 	return z_impl_zephyr_write_stdout(buf, nbytes);
 }
 __weak FUNC_ALIAS(_write, write, int);
+#endif
 
 int _open(const char *name, int mode)
 {
